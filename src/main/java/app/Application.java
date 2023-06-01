@@ -23,8 +23,9 @@ import decorators.PomodoroDecorator;
 import decorators.ProsciuttoDecorator;
 import decorators.SalameDecorator;
 import enums.StatoOrdine;
+import lombok.extern.slf4j.Slf4j;
 
-//@Slf4j
+@Slf4j
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = SpringApplicationAdminJmxAutoConfiguration.class)
 
@@ -34,6 +35,7 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+		log.info("Hello world");
 
 		ctx.scan("app");
 		ctx.refresh();
@@ -44,6 +46,11 @@ public class Application {
 	}
 
 	public static void pizzeria() {
+		String blackText = "\033[30m";
+		String blackBoldText = "\033[1;30m";
+		String brightYellowBackground = "\033[103m";
+		String resetColor = "\033[0m";
+
 		Scanner scan = new Scanner(System.in);
 		boolean attivo;
 		ArrayList<Elemento> elementi = new ArrayList<Elemento>();
@@ -52,9 +59,9 @@ public class Application {
 		Franchising f1 = new Franchising("Maglia", 21.99);
 		Franchising f2 = new Franchising("Tazza", 4.99);
 
-		System.out.printf("%n%nFRANCHISING:%n");
-		System.out.println(f1);
-		System.out.println(f2);
+		System.out.printf(blackText + brightYellowBackground + "%n%nFRANCHISING:                    %n" + resetColor);
+		System.out.println(" " + f1);
+		System.out.println(" " + f2);
 		System.out.printf("%n");
 
 		Topping t1 = new AnanasDecorator();
@@ -63,7 +70,8 @@ public class Application {
 		Topping t4 = new ProsciuttoDecorator();
 		Topping t5 = new SalameDecorator();
 
-		Pizza p1 = (Pizza) ctx.getBean(Pizza.class);
+//		Pizza p1 = (Pizza) ctx.getBean(Pizza.class);
+		Pizza p1 = (Pizza) new Pizza();
 		Pizza pMargherita = new PomodoroDecorator(new MozzarellaDecorator(p1));
 		Pizza pProsciutto = new PomodoroDecorator(new MozzarellaDecorator(new ProsciuttoDecorator(p1)));
 		Pizza pAnanas = new PomodoroDecorator(
@@ -76,16 +84,19 @@ public class Application {
 		Bevanda b2 = new Bevanda(1.29, "Acqua (0.5l)", 0);
 		Bevanda b3 = new Bevanda(7.49, "Vino (0.75l, 13%)", 607);
 
-		Tavolo tav1 = ctx.getBean(Tavolo.class, 1, 4, false);
-		Tavolo tav2 = ctx.getBean(Tavolo.class, 2, 4, false);
-		Tavolo tav3 = ctx.getBean(Tavolo.class, 3, 4, false);
+		Tavolo tav1 = (Tavolo) new Tavolo(1, 4, false);
+		Tavolo tav2 = (Tavolo) new Tavolo(1, 4, false);
+		Tavolo tav3 = (Tavolo) new Tavolo(1, 4, false);
+//		Tavolo tav1 = ctx.getBean(Tavolo.class, 1, 4, false);
+//		Tavolo tav2 = ctx.getBean(Tavolo.class, 2, 4, false);
+//		Tavolo tav3 = ctx.getBean(Tavolo.class, 3, 4, false);
 
 		// START PIZZERIA
 		System.out.println("-------------------------------");
 		System.out.println("BENVENUTI IN GODFATHER'S PIZZA!");
 		System.out.println("-------------------------------");
 
-		System.out.println("Quante persone siete?");
+		System.out.println("In quanti siete?");
 		int nPersone = scan.nextInt();
 
 		if (nPersone > 4 || (tav1.isOccupato() && tav2.isOccupato() && tav3.isOccupato())) {
@@ -111,34 +122,34 @@ public class Application {
 			System.out.println("--------------------");
 
 			System.out.println("PIZZE:");
-			System.out.println("1 - Pizza Margherita " + "(" + pMargherita.getNome() + ")" + " | Prezzo: €"
+			System.out.println(" 1 - Pizza Margherita " + "(" + pMargherita.getNome() + ")" + " | Prezzo: €"
 					+ (Math.round(pMargherita.getPrezzo() * 100.00)) / 100.00 + " | Calorie: "
 					+ pMargherita.getCalorie());
-			System.out.println("2 - Pizza Prosciutto " + "(" + pProsciutto.getNome() + ")" + " | Prezzo: €"
+			System.out.println(" 2 - Pizza Prosciutto " + "(" + pProsciutto.getNome() + ")" + " | Prezzo: €"
 					+ (Math.round(pProsciutto.getPrezzo() * 100.00)) / 100.00 + " | Calorie: "
 					+ pProsciutto.getCalorie());
-			System.out.println("3 - Pizza Hawaiian " + "(" + pAnanas.getNome() + ")" + " | Prezzo: €"
+			System.out.println(" 3 - Pizza Hawaiian " + "(" + pAnanas.getNome() + ")" + " | Prezzo: €"
 					+ (Math.round(pAnanas.getPrezzo() * 100.00)) / 100.00 + " | Calorie: " + pAnanas.getCalorie());
-			System.out.println("4 - Pizza Salame " + "(" + pSalame.getNome() + ")" + " | Prezzo: €"
+			System.out.println(" 4 - Pizza Salame " + "(" + pSalame.getNome() + ")" + " | Prezzo: €"
 					+ (Math.round(pSalame.getPrezzo() * 100.00)) / 100.00 + " | Calorie: " + pSalame.getCalorie());
-			System.out.println("5 - Pizza Salame e prosciutto " + "(" + pSalameProsciutto.getNome() + ")"
+			System.out.println(" 5 - Pizza Salame e prosciutto " + "(" + pSalameProsciutto.getNome() + ")"
 					+ " | Prezzo: €" + (Math.round(pSalameProsciutto.getPrezzo() * 100.00)) / 100.00 + " | Calorie: "
 					+ pSalameProsciutto.getCalorie());
 
 			System.out.printf("%nTOPPING:%n");
-			System.out.println(t1);
-			System.out.println(t2);
-			System.out.println(t3);
-			System.out.println(t4);
-			System.out.println(t5);
+			System.out.println(" " + t1);
+			System.out.println(" " + t2);
+			System.out.println(" " + t3);
+			System.out.println(" " + t4);
+			System.out.println(" " + t5);
 
 			System.out.printf("%nBEVANDE:%n");
-			System.out.println("6 - " + b1);
-			System.out.println("7 - " + b2);
-			System.out.println("8 - " + b3);
+			System.out.println(" 6 - " + b1);
+			System.out.println(" 7 - " + b2);
+			System.out.println(" 8 - " + b3);
 
 			System.out.printf("%nINFO:%n");
-			System.out.println("Coperto €2.00");
+			System.out.println(" Coperto €2.00");
 			System.out.println("--------------------");
 
 			System.out.println("Cosa volete ordinare? (Digitare il numero corrispondente alla scelta)");
@@ -150,57 +161,59 @@ public class Application {
 			if (scelta > 8) {
 				System.out.println("Errore");
 			} else if (!(scelta == 6 || scelta == 7 || scelta == 8)) {
-				System.out.println("Preferenze di cottura o di impasto?");
+				System.out.println("Ha preferenze sull'impasto?");
 				scan.next();
 				nota = scan.nextLine();
 			} else {
-				System.out.println("Preferenze sulla bevanda?");
+				System.out.println("Ha preferenze sulla bevanda?");
 				scan.next();
 				nota = scan.nextLine();
 			}
 
 			switch (scelta) {
-			case (1):
+			case 1:
+//				Elemento e1 = new Elemento(pMargherita, nota);
 				Elemento e1 = ctx.getBean(Elemento.class, pMargherita, nota);
 				elementi.add(e1);
 				break;
-			case (2):
+			case 2:
+//				Elemento e2 = new Elemento(pProsciutto, nota);
 				Elemento e2 = ctx.getBean(Elemento.class, pProsciutto, nota);
 				elementi.add(e2);
 				break;
-			case (3):
+			case 3:
 				Elemento e3 = ctx.getBean(Elemento.class, pAnanas, nota);
 				elementi.add(e3);
 				break;
-			case (4):
+			case 4:
 				Elemento e4 = ctx.getBean(Elemento.class, pSalame, nota);
 				elementi.add(e4);
 				break;
-			case (5):
+			case 5:
 				Elemento e5 = ctx.getBean(Elemento.class, pSalameProsciutto, nota);
 				elementi.add(e5);
 				break;
-			case (6):
+			case 6:
 				Elemento e6 = ctx.getBean(Elemento.class, b1, nota);
 				elementi.add(e6);
 				break;
-			case (7):
+			case 7:
 				Elemento e7 = ctx.getBean(Elemento.class, b2, nota);
 				elementi.add(e7);
 				break;
-			case (8):
+			case 8:
 				Elemento e8 = ctx.getBean(Elemento.class, b3, nota);
 				elementi.add(e8);
 				break;
 			default:
-				System.out.println("Numero non presente nel menù");
+				System.out.println("Ci dispiace ma lua sua scelta non è presente nel nostro menù");
 				System.exit(0);
 				break;
 			}
 
-			System.out.println("Desiderate altro? (Digitare Si o qualunque altro carattere per No)");
+			System.out.println("Desiderate altro? (S/N)");
 			String altro = scan.nextLine();
-			attivo = altro.equalsIgnoreCase("Si");
+			attivo = altro.equalsIgnoreCase("S");
 		} while (attivo);
 
 		// Creazione dell'ordine
@@ -210,16 +223,14 @@ public class Application {
 		// System.out.println(o1);
 
 		// Creazione del conto
-		System.out.printf("%n%nEcco il conto:%n");
+		System.out.printf("%n%nEcco a lei il conto:%n");
 
 		System.out.println("----GODFATHER'S PIZZA----");
 		o1.getListaOrdine();
 		System.out.println("-------------------------");
 		System.out.printf("Totale: €%.2f%n", o1.getImportoTotale());
-		System.out.println("GRAZIE PER AVERCI SCELTO, A PRESTO!!");
 
 		scan.close();
-
 	}
 
 }
